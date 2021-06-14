@@ -1,0 +1,68 @@
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="../static/index.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.iconify.design/1/1.0.7/iconify.min.js"></script>
+    </head>
+    <body>
+        <div class="basic-card">
+            <h3>{{month}}/{{day}}/{{year}}</h3>
+        </div>
+        <div class = "basic-card">
+            <h3 id="count">Tomatoes: {{tomato.count}}</h3>
+        </div>
+        <div class = "basic-card">
+            <h3 id="time" class="time"> Time: 30m 00s</h3>
+        </div>
+        <div class = "basic-card">
+            <button onclick="timer()"> Go! </button>
+        </div>
+    </body>
+    
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script>
+        var pom = 30;
+
+        function changeCount(response) {
+            var count = response["count"];
+            $("#count").html("Tomatoes: " + count)
+        }
+
+        function timer() {
+            mins = 0;
+            secs = 4;
+            let x = setInterval(function(){
+
+                // Timer complete 
+                if (mins == 0 && secs == 0) {
+                    clearInterval(x);
+                    if (pom == 30) {
+                        pom = 5;
+                        $.ajax({
+                            type: 'POST',
+                            url: "{{url_for('tomInc')}}",
+                            contentType: 'application/json',
+                            data: JSON.stringify({'inc': "1"}),
+                            success: changeCount
+                        });
+                    } else {
+                        pom = 30;
+                    }
+                }
+
+                // Next minute 
+                else if (secs == 0) {
+                    mins--;
+                    secs=59;
+
+                // Decrement seconds
+                } else {
+                    secs--;
+                }
+                document.getElementById("time").innerHTML = "Time: " + mins + "m " + secs + "s ";
+            }, 1000)
+        }
+    </script>
+
+</html>
